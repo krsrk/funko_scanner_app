@@ -94,10 +94,11 @@ void main() {
 
     group('parseFunkoFromCode', () {
       test('should parse FUNKO format correctly', () {
-        const code = 'FUNKO:12345|Funko Pop Plus|Gamer Stitch|Disney|Lilo & Stitch|Metallic';
-        
+        const code =
+            'FUNKO:12345|Funko Pop Plus|Gamer Stitch|Disney|Lilo & Stitch|Metallic';
+
         final funko = service.parseFunkoFromCode(code);
-        
+
         expect(funko, isNotNull);
         expect(funko!.funkoId, equals(12345));
         expect(funko.funkoType, equals('Funko Pop Plus'));
@@ -110,10 +111,11 @@ void main() {
       });
 
       test('should parse pipe-separated format correctly', () {
-        const code = '67890|Funko Pop|Spider-Man|Marvel|Spider-Man|Glow in the Dark';
-        
+        const code =
+            '67890|Funko Pop|Spider-Man|Marvel|Spider-Man|Glow in the Dark';
+
         final funko = service.parseFunkoFromCode(code);
-        
+
         expect(funko, isNotNull);
         expect(funko!.funkoId, equals(67890));
         expect(funko.funkoType, equals('Funko Pop'));
@@ -127,9 +129,9 @@ void main() {
 
       test('should parse numeric format and generate dummy data', () {
         const code = '123456789';
-        
+
         final funko = service.parseFunkoFromCode(code);
-        
+
         expect(funko, isNotNull);
         expect(funko!.funkoId, equals(123456789));
         expect(funko.funkoType, isNotEmpty);
@@ -143,25 +145,25 @@ void main() {
 
       test('should handle invalid FUNKO format', () {
         const code = 'FUNKO:invalid|format';
-        
+
         final funko = service.parseFunkoFromCode(code);
-        
+
         expect(funko, isNull);
       });
 
       test('should handle invalid pipe-separated format', () {
         const code = '123|incomplete';
-        
+
         final funko = service.parseFunkoFromCode(code);
-        
+
         expect(funko, isNull);
       });
 
       test('should handle empty or short codes', () {
         const code = '123';
-        
+
         final funko = service.parseFunkoFromCode(code);
-        
+
         expect(funko, isNotNull);
         expect(funko!.funkoId, isPositive);
         expect(funko.funkoType, isNotEmpty);
@@ -254,4 +256,4 @@ void main() {
       });
     });
   });
-} 
+}

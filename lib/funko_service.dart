@@ -5,7 +5,7 @@ import 'funko.dart';
 
 class FunkoService {
   final List<Funko> _funkos = [];
-  
+
   List<Funko> get funkos => List.unmodifiable(_funkos);
 
   /// Agrega un nuevo funko o suma la cantidad si ya existe
@@ -75,12 +75,13 @@ class FunkoService {
 
   /// Parsea formato numérico: genera datos basados en el ID
   Funko _parseNumericFormat(String code) {
-    final id = int.tryParse(code.replaceAll(RegExp(r'\D'), '')) ?? 
-               DateTime.now().millisecondsSinceEpoch;
-    
+    final id =
+        int.tryParse(code.replaceAll(RegExp(r'\D'), '')) ??
+        DateTime.now().millisecondsSinceEpoch;
+
     // Genera datos dummy basados en el ID
     final dummyData = _getDummyDataById(id);
-    
+
     return Funko(
       funkoId: id,
       funkoType: dummyData['type']!,
@@ -97,7 +98,7 @@ class FunkoService {
   Funko _parseDefaultFormat(String code) {
     final id = DateTime.now().millisecondsSinceEpoch;
     final dummyData = _getDummyDataById(id);
-    
+
     return Funko(
       funkoId: id,
       funkoType: dummyData['type']!,
@@ -149,7 +150,7 @@ class FunkoService {
         'sticker': 'Metallic',
       },
     ];
-    
+
     final data = dummyFunkos[id % dummyFunkos.length];
     return {
       'type': data['type']!,
@@ -169,7 +170,7 @@ class FunkoService {
       }
 
       final body = jsonEncode(_funkos.map((f) => f.toJson()).toList());
-      
+
       final response = await http.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
@@ -195,4 +196,4 @@ class FunkoService {
 
   /// Obtiene el número de tipos únicos
   int get uniqueItems => _funkos.length;
-} 
+}
