@@ -2,6 +2,8 @@
 
 A new Flutter project for scanning Funko Pop figures.
 
+<!-- Trigger CI/CD pipeline -->
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
