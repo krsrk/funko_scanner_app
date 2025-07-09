@@ -20,9 +20,10 @@ void main() {
       await tester.pumpWidget(const MyApp());
 
       expect(find.text('Funko Scanner'), findsOneWidget);
-      expect(find.text('Escanear Cámara'), findsOneWidget);
-      expect(find.text('Escanear Imagen'), findsOneWidget);
+      expect(find.text('Cámara'), findsOneWidget);
+      expect(find.text('Imagen'), findsOneWidget);
       expect(find.text('Enviar'), findsOneWidget);
+      expect(find.text('No hay Funkos escaneados'), findsOneWidget);
 
       // El botón enviar debería estar deshabilitado cuando no hay funkos
       final sendButton = tester.widget<ElevatedButton>(
@@ -37,7 +38,7 @@ void main() {
       await tester.pumpWidget(const MyApp());
 
       // Simular escaneo de un funko
-      await tester.tap(find.text('Escanear Cámara'));
+      await tester.tap(find.text('Cámara'));
       await tester.pumpAndSettle();
 
       // Simular que se escaneó un código
@@ -107,7 +108,7 @@ void main() {
     ) async {
       await tester.pumpWidget(const MyApp());
 
-      await tester.tap(find.text('Escanear Cámara'));
+      await tester.tap(find.text('Cámara'));
       await tester.pumpAndSettle();
 
       // Debería navegar a la pantalla del scanner
@@ -120,7 +121,7 @@ void main() {
     ) async {
       await tester.pumpWidget(const MyApp());
 
-      await tester.tap(find.text('Escanear Imagen'));
+      await tester.tap(find.text('Imagen'));
       await tester.pumpAndSettle();
 
       // Debería simular el escaneo desde imagen
