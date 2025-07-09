@@ -20,24 +20,24 @@ class Funko {
   });
 
   Map<String, dynamic> toJson() => {
-        'funko_id': funkoId,
-        'funko_type': funkoType,
-        'funko_name': funkoName,
-        'funko_license': funkoLicense,
-        'funko_series': funkoSeries,
-        'funko_sticker': funkoSticker,
-        'quantity': quantity,
-        'images_path': imagesPath,
-      };
+    'funko_id': funkoId,
+    'funko_type': funkoType,
+    'funko_name': funkoName,
+    'funko_license': funkoLicense,
+    'funko_series': funkoSeries,
+    'funko_sticker': funkoSticker,
+    'quantity': quantity,
+    'images_path': imagesPath,
+  };
 
   factory Funko.fromJson(Map<String, dynamic> json) => Funko(
-        funkoId: json['funko_id'],
-        funkoType: json['funko_type'],
-        funkoName: json['funko_name'],
-        funkoLicense: json['funko_license'],
-        funkoSeries: json['funko_series'],
-        funkoSticker: json['funko_sticker'],
-        quantity: json['quantity'],
-        imagesPath: json['images_path'],
-      );
-} 
+    funkoId: json['funko_id'],
+    funkoType: json['funko_type'],
+    funkoName: json['funko_name'],
+    funkoLicense: json['funko_license'],
+    funkoSeries: json['funko_series'],
+    funkoSticker: json['funko_sticker'],
+    quantity: json['quantity'],
+    imagesPath: json['images_path'],
+  );
+}

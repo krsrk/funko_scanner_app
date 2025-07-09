@@ -14,14 +14,16 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 void main() {
   group('Funko Scanner Widget Tests', () {
-    testWidgets('should display empty state when no funkos', (WidgetTester tester) async {
+    testWidgets('should display empty state when no funkos', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MyApp());
 
       expect(find.text('Funko Scanner'), findsOneWidget);
       expect(find.text('Escanear Cámara'), findsOneWidget);
       expect(find.text('Escanear Imagen'), findsOneWidget);
       expect(find.text('Enviar'), findsOneWidget);
-      
+
       // El botón enviar debería estar deshabilitado cuando no hay funkos
       final sendButton = tester.widget<ElevatedButton>(
         find.widgetWithText(ElevatedButton, 'Enviar'),
@@ -29,7 +31,9 @@ void main() {
       expect(sendButton.onPressed, isNull);
     });
 
-    testWidgets('should display funko list when funkos are added', (WidgetTester tester) async {
+    testWidgets('should display funko list when funkos are added', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MyApp());
 
       // Simular escaneo de un funko
@@ -39,25 +43,29 @@ void main() {
       // Simular que se escaneó un código
       // Nota: En un test real, necesitarías mockear el scanner
       // Por ahora, verificamos que la UI se actualiza correctamente
-      
+
       expect(find.byType(ListView), findsOneWidget);
     });
 
-    testWidgets('should enable send button when funkos are present', (WidgetTester tester) async {
+    testWidgets('should enable send button when funkos are present', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MyApp());
 
       // Simular que hay funkos en la lista
       // En un test real, necesitarías inyectar un FunkoService mock
-      
+
       final sendButton = tester.widget<ElevatedButton>(
         find.widgetWithText(ElevatedButton, 'Enviar'),
       );
-      
+
       // El botón debería estar habilitado cuando hay funkos
       // expect(sendButton.onPressed, isNotNull);
     });
 
-    testWidgets('should show loading indicator when sending', (WidgetTester tester) async {
+    testWidgets('should show loading indicator when sending', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MyApp());
 
       // Simular envío de datos
@@ -68,7 +76,9 @@ void main() {
       // expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('should display funko details correctly', (WidgetTester tester) async {
+    testWidgets('should display funko details correctly', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MyApp());
 
       // Crear un funko de prueba
@@ -92,7 +102,9 @@ void main() {
       // expect(find.text('Funko Pop Plus'), findsOneWidget);
     });
 
-    testWidgets('should handle camera scan button tap', (WidgetTester tester) async {
+    testWidgets('should handle camera scan button tap', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MyApp());
 
       await tester.tap(find.text('Escanear Cámara'));
@@ -103,7 +115,9 @@ void main() {
       expect(find.byType(MobileScanner), findsOneWidget);
     });
 
-    testWidgets('should handle image scan button tap', (WidgetTester tester) async {
+    testWidgets('should handle image scan button tap', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(const MyApp());
 
       await tester.tap(find.text('Escanear Imagen'));

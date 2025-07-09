@@ -92,4 +92,4 @@ void main() {
       expect(funko.quantity, equals(8));
     });
   });
-} 
+}

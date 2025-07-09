@@ -44,9 +44,7 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
     } else {
       code = await Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => const ScannerScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const ScannerScreen()),
       );
     }
     if (code != null) {
@@ -56,7 +54,7 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
         setState(() {
           _funkoService.addOrUpdateFunko(funko);
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Funko agregado: ${funko.funkoName}'),
@@ -76,11 +74,11 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
 
   Future<void> _sendToWebhook() async {
     setState(() => _isSending = true);
-    
+
     final success = await _funkoService.sendToWebhook();
-    
+
     setState(() => _isSending = false);
-    
+
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -125,9 +123,9 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
                 setState(() {
                   _funkoService.clearFunkos();
                 });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Lista limpiada')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Lista limpiada')));
               },
               icon: const Icon(Icons.clear_all),
               tooltip: 'Limpiar lista',
@@ -165,7 +163,7 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
                 ],
               ),
             ),
-          
+
           // Lista de funkos
           Expanded(
             child: _funkoService.funkos.isEmpty
@@ -173,7 +171,11 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.qr_code_scanner, size: 64, color: Colors.grey),
+                        Icon(
+                          Icons.qr_code_scanner,
+                          size: 64,
+                          color: Colors.grey,
+                        ),
                         SizedBox(height: 16),
                         Text(
                           'No hay Funkos escaneados',
@@ -215,7 +217,9 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('ID: ${funko.funkoId}'),
-                              Text('${funko.funkoLicense} - ${funko.funkoSeries}'),
+                              Text(
+                                '${funko.funkoLicense} - ${funko.funkoSeries}',
+                              ),
                               Text('Sticker: ${funko.funkoSticker}'),
                             ],
                           ),
@@ -228,7 +232,7 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
                     },
                   ),
           ),
-          
+
           // Indicador de carga
           if (_isSending)
             Container(
@@ -242,7 +246,7 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
                 ],
               ),
             ),
-          
+
           // Botones de acción
           Padding(
             padding: const EdgeInsets.all(16),
