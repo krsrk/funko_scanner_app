@@ -165,11 +165,14 @@ class FunkoService {
   Future<bool> sendToWebhook() async {
     try {
       final url = dotenv.env['WEBHOOK_URL'] ?? '';
-      if (url.isEmpty) {
-        throw Exception('WEBHOOK_URL not configured');
+      print('Webhook URL: ${url.isEmpty ? 'NOT CONFIGURED' : url}');
+      
+      if (url.isEmpty || url == '[your_webhook_url]') {
+        throw Exception('WEBHOOK_URL not configured. Please update your .env file with a valid webhook URL.');
       }
 
       final body = jsonEncode(_funkos.map((f) => f.toJson()).toList());
+      print('Sending ${_funkos.length} funkos to webhook...');
 
       final response = await http.post(
         Uri.parse(url),
@@ -177,6 +180,7 @@ class FunkoService {
         body: body,
       );
 
+      print('Webhook response status: ${response.statusCode}');
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
       print('Error sending to webhook: $e');
