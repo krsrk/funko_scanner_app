@@ -22,6 +22,11 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
     
+    - name: Preparar .env para tests
+      run: |
+        cp .env.development.example .env
+        echo "WEBHOOK_URL=https://dummy.url" >> .env
+    
     - name: Verify formatting
       run: dart format --output=none --set-exit-if-changed .
     
