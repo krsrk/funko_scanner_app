@@ -24,7 +24,10 @@ void main() {
       expect(find.text('Escanear imagen'), findsOneWidget);
       expect(find.text('Enviar'), findsOneWidget);
       expect(find.text('No hay Funkos escaneados'), findsOneWidget);
-      expect(find.text('Usa los botones de abajo para escanear'), findsOneWidget);
+      expect(
+        find.text('Usa los botones de abajo para escanear'),
+        findsOneWidget,
+      );
 
       // Verificar que el botón enviar existe (usando find.text en lugar de widgetWithText)
       expect(find.text('Enviar'), findsOneWidget);
