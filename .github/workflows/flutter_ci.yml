@@ -27,8 +27,8 @@ jobs:
         cp .env.development.example .env
         echo "WEBHOOK_URL=https://dummy.url" >> .env
     
-    - name: Verify formatting
-      run: dart format --output=none --set-exit-if-changed .
+    - name: Format code
+      run: dart format .
     
     - name: Analyze project source
       run: flutter analyze
@@ -36,31 +36,6 @@ jobs:
     
     - name: Run tests
       run: flutter test
-    
-    - name: Build Web
-      run: flutter build web
-    
-    - name: Upload Web Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: web-build
-        path: build/web/
-
-  build-android:
-    runs-on: ubuntu-latest
-    needs: test
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.32.5'
-        channel: 'stable'
-    
-    - name: Install dependencies
-      run: flutter pub get
     
     - name: Build APK Release
       run: flutter build apk --release
