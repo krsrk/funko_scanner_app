@@ -177,9 +177,11 @@ class FunkoService {
     try {
       final url = dotenv.env['WEBHOOK_URL'] ?? '';
       print('Webhook URL: ${url.isEmpty ? 'NOT CONFIGURED' : url}');
-      
+
       if (url.isEmpty || url == '[your_webhook_url]') {
-        throw Exception('WEBHOOK_URL not configured. Please update your .env file with a valid webhook URL.');
+        throw Exception(
+          'WEBHOOK_URL not configured. Please update your .env file with a valid webhook URL.',
+        );
       }
 
       final body = jsonEncode(_funkos.map((f) => f.toJson()).toList());
@@ -204,7 +206,9 @@ class FunkoService {
     try {
       final url = dotenv.env['WEBHOOK_URL'] ?? '';
       if (url.isEmpty || url == '[your_webhook_url]') {
-        throw Exception('WEBHOOK_URL not configured. Please update your .env file with a valid webhook URL.');
+        throw Exception(
+          'WEBHOOK_URL not configured. Please update your .env file with a valid webhook URL.',
+        );
       }
       final uuid = Uuid().v4();
       final filename = '$uuid.jpg';

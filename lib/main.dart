@@ -241,7 +241,9 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
                             ),
                             title: Text(
                               funko.funkoName,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
