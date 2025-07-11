@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'funko_service.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 Future<void> main() async {
-  await dotenv.load();
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -111,6 +113,33 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
     return codes[DateTime.now().millisecond % codes.length];
   }
 
+  Future<void> _scanFrontImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 60, // Comprimir la imagen para reducir el tamaño
+    );
+    if (pickedFile != null) {
+      final file = File(pickedFile.path);
+      final success = await _funkoService.sendImageToWebhook(file);
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Imagen enviada correctamente al webhook'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al enviar la imagen al webhook'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,167 +161,173 @@ class _FunkoScannerPageState extends State<FunkoScannerPage> {
             ),
         ],
       ),
-      body: Column(
-        children: [
-          // Header con estadísticas
-          if (_funkoService.funkos.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.all(16),
-              color: Colors.grey[100],
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        '${_funkoService.uniqueItems}',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      const Text('Tipos únicos'),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        '${_funkoService.totalItems}',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      const Text('Total items'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-          // Lista de funkos
-          Expanded(
-            child: _funkoService.funkos.isEmpty
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header con estadísticas
+            if (_funkoService.funkos.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.all(16),
+                color: Colors.grey[100],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
                       children: [
-                        Icon(
-                          Icons.qr_code_scanner,
-                          size: 64,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(height: 16),
                         Text(
-                          'No hay Funkos escaneados',
-                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                          '${_funkoService.uniqueItems}',
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Usa los botones de abajo para escanear',
-                          style: TextStyle(color: Colors.grey),
-                        ),
+                        const Text('Tipos únicos'),
                       ],
                     ),
-                  )
-                : ListView.builder(
-                    itemCount: _funkoService.funkos.length,
-                    itemBuilder: (context, index) {
-                      final funko = _funkoService.funkos[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                    Column(
+                      children: [
+                        Text(
+                          '${_funkoService.totalItems}',
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.deepPurple,
-                            child: Text(
-                              '${funko.quantity}',
+                        const Text('Total items'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+            // Lista de funkos
+            Expanded(
+              child: _funkoService.funkos.isEmpty
+                  ? const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.qr_code_scanner,
+                            size: 64,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            'No hay Funkos escaneados',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Usa los botones de abajo para escanear',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _funkoService.funkos.length,
+                      itemBuilder: (context, index) {
+                        final funko = _funkoService.funkos[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.deepPurple,
+                              child: Text(
+                                '${funko.quantity}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            title: Text(
+                              funko.funkoName,
                               style: const TextStyle(
-                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('ID: ${funko.funkoId}'),
+                                Text(
+                                  '${funko.funkoLicense} - ${funko.funkoSeries}',
+                                ),
+                                Text('Sticker: ${funko.funkoSticker}'),
+                              ],
+                            ),
+                            trailing: Chip(
+                              label: Text(funko.funkoType),
+                              backgroundColor: Colors.deepPurple[100],
+                            ),
                           ),
-                          title: Text(
-                            funko.funkoName,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('ID: ${funko.funkoId}'),
-                              Text(
-                                '${funko.funkoLicense} - ${funko.funkoSeries}',
-                              ),
-                              Text('Sticker: ${funko.funkoSticker}'),
-                            ],
-                          ),
-                          trailing: Chip(
-                            label: Text(funko.funkoType),
-                            backgroundColor: Colors.deepPurple[100],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
+                        );
+                      },
+                    ),
+            ),
 
-          // Indicador de carga
-          if (_isSending)
-            Container(
+            // Indicador de carga
+            if (_isSending)
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(width: 16),
+                    Text('Enviando datos...'),
+                  ],
+                ),
+              ),
+
+            // Botones de acción
+            Padding(
               padding: const EdgeInsets.all(16),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(width: 16),
-                  Text('Enviando datos...'),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _scanCode(fromImage: false),
+                      icon: const Icon(Icons.camera_alt),
+                      label: const Text('Cámara'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _scanFrontImage,
+                      icon: const Icon(Icons.photo_camera_front),
+                      label: const Text('Escanear imagen'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _funkoService.funkos.isEmpty || _isSending
+                          ? null
+                          : _sendToWebhook,
+                      icon: const Icon(Icons.send),
+                      label: const Text('Enviar'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-
-          // Botones de acción
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _scanCode(fromImage: false),
-                    icon: const Icon(Icons.camera_alt),
-                    label: const Text('Cámara'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _scanCode(fromImage: true),
-                    icon: const Icon(Icons.image),
-                    label: const Text('Imagen'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _funkoService.funkos.isEmpty || _isSending
-                        ? null
-                        : _sendToWebhook,
-                    icon: const Icon(Icons.send),
-                    label: const Text('Enviar'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

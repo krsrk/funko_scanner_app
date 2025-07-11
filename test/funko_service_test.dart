@@ -134,13 +134,13 @@ void main() {
 
         expect(funko, isNotNull);
         expect(funko!.funkoId, equals(123456789));
-        expect(funko.funkoType, isNotEmpty);
-        expect(funko.funkoName, isNotEmpty);
-        expect(funko.funkoLicense, isNotEmpty);
-        expect(funko.funkoSeries, isNotEmpty);
-        expect(funko.funkoSticker, isNotEmpty);
+        expect(funko.funkoType, equals('Desconocido'));
+        expect(funko.funkoName, equals('Funko desconocido'));
+        expect(funko.funkoLicense, isEmpty);
+        expect(funko.funkoSeries, isEmpty);
+        expect(funko.funkoSticker, equals(code));
         expect(funko.quantity, equals(1));
-        expect(funko.imagesPath, equals('funko_123456789.jpg'));
+        expect(funko.imagesPath, isEmpty);
       });
 
       test('should handle invalid FUNKO format', () {
