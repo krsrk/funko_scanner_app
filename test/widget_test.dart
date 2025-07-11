@@ -21,9 +21,13 @@ void main() {
       // Verificar elementos básicos de la UI
       expect(find.text('Funko Scanner'), findsOneWidget);
       expect(find.text('Cámara'), findsOneWidget);
-      expect(find.text('Imagen'), findsOneWidget);
+      expect(find.text('Escanear imagen'), findsOneWidget);
       expect(find.text('Enviar'), findsOneWidget);
       expect(find.text('No hay Funkos escaneados'), findsOneWidget);
+      expect(
+        find.text('Usa los botones de abajo para escanear'),
+        findsOneWidget,
+      );
 
       // Verificar que el botón enviar existe (usando find.text en lugar de widgetWithText)
       expect(find.text('Enviar'), findsOneWidget);
@@ -96,8 +100,8 @@ void main() {
     ) async {
       await tester.pumpWidget(const MyApp());
 
-      // Verificar que el botón de imagen existe
-      expect(find.text('Imagen'), findsOneWidget);
+      // Verificar que el botón de escanear imagen existe
+      expect(find.text('Escanear imagen'), findsOneWidget);
 
       // En un test real, necesitarías mockear el picker de imagen
       // Por ahora, solo verificamos que el botón existe
