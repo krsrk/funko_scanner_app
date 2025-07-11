@@ -21,6 +21,11 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
     
+    - name: Preparar .env para build
+      run: |
+        cp .env.development.example .env
+        echo "WEBHOOK_URL=https://dummy.url" >> .env
+    
     - name: Build APK Release
       run: flutter build apk --release
     
@@ -31,28 +36,4 @@ jobs:
         draft: false
         prerelease: false
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  deploy-web:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.32.5'
-        channel: 'stable'
-    
-    - name: Install dependencies
-      run: flutter pub get
-    
-    - name: Build Web Release
-      run: flutter build web --release
-    
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build/web 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
