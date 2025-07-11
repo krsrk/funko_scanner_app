@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'funko.dart';
+import 'dart:io'; // Added for File
+import 'package:uuid/uuid.dart';
+import 'package:http_parser/http_parser.dart';
 
 class FunkoService {
   final List<Funko> _funkos = [];
@@ -26,10 +29,18 @@ class FunkoService {
         return _parseFunkoFormat(code);
       } else if (code.contains('|')) {
         return _parsePipeSeparatedFormat(code);
-      } else if (code.length >= 8) {
-        return _parseNumericFormat(code);
       } else {
-        return _parseDefaultFormat(code);
+        // Mostrar el valor leído y 'Funko desconocido'
+        return Funko(
+          funkoId: int.tryParse(code.replaceAll(RegExp(r'\D'), '')) ?? 0,
+          funkoType: 'Desconocido',
+          funkoName: 'Funko desconocido',
+          funkoLicense: '',
+          funkoSeries: '',
+          funkoSticker: code,
+          quantity: 1,
+          imagesPath: '',
+        );
       }
     } catch (e) {
       print('Error parsing code: $e');
@@ -184,6 +195,34 @@ class FunkoService {
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
       print('Error sending to webhook: $e');
+      return false;
+    }
+  }
+
+  // Agregar función para enviar imagen al webhook
+  Future<bool> sendImageToWebhook(File imageFile) async {
+    try {
+      final url = dotenv.env['WEBHOOK_URL'] ?? '';
+      if (url.isEmpty || url == '[your_webhook_url]') {
+        throw Exception('WEBHOOK_URL not configured. Please update your .env file with a valid webhook URL.');
+      }
+      final uuid = Uuid().v4();
+      final filename = '$uuid.jpg';
+      final request = http.MultipartRequest('POST', Uri.parse(url));
+      request.fields['id'] = uuid;
+      request.fields['filename'] = filename;
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          imageFile.path,
+          filename: filename,
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+      final response = await request.send();
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print('Error sending image to webhook: $e');
       return false;
     }
   }
